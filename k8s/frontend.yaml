@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yolofrontend
+spec:
+  selector:
+    matchLabels:
+      app: yolofrontend
+  template:
+    metadata:
+      labels:
+        app: yolofrontend
+    spec:
+      containers:
+      - name: yolofrontend-cont
+        image: jesserichard/yolo-client:1.0
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yolofrontend-serv
+spec:
+  type: LoadBalancer
+  selector:
+    app: yolofrontend
+  ports:
+  - port: 3000
+    targetPort: 3000
+  

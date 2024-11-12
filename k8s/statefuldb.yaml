@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dbmongo
+spec:
+  selector:
+    matchLabels:
+      app: dbmongo
+  serviceName: "dbmongo"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dbmongo
+    spec:
+      containers:
+      - name: dbmongo
+        image: dbmongo:v1.0.0
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: dbmongo-vol
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: dbmongo-vol
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 8Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dbmongo
+spec:
+  selector:
+    app: dbmongo
+  ports:
+  - port: 27017
+    targetPort: 27017
